@@ -231,7 +231,7 @@ it('Estudiantes_carga_error_vacio', function(done){
   });
 
   client1.on('estudiante_insertado', function(respuesta){
-      respuesta.should.equal("error");
+      respuesta.should.equal("error_vacio");
       client1.disconnect();
       done();
     
@@ -246,7 +246,7 @@ it('Estudiantes_carga_error_numero_campos', function(done){
   });
 
   client1.on('estudiante_insertado', function(respuesta){
-      respuesta.should.equal("error");
+      respuesta.should.equal("error_campos");
       client1.disconnect();
       done();
     
