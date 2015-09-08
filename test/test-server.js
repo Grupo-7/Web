@@ -208,5 +208,20 @@ it('Comprobar si se lee el formato de la fecha correctamente', function(done){
   });
 });
 
+it('Estudiantes_carga', function(done){
+  var client1 = io.connect(socketURL, options);
+
+  client1.on('connect', function(data){
+    client1.emit('insertar_estudiante', 'Julio Flores,201213230');
+  });
+
+  client1.on('estudiante_insertado', function(respuesta){
+      respuesta.should.equal("correcto");
+      client1.disconnect();
+      done();
+    
+  });
+});
+
 });
 

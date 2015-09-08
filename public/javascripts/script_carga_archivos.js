@@ -20,6 +20,7 @@ function CargarArchivo(){
 			LeerArchivo(input.files[0], function(e) {
 				//se procede a leer el archivo
 				$('#txt_resultado_lectura').text(e.target.result);
+				document.getElementById('txt_resultado_lectura').innerHTML = "<p>"+e.target.result+"</p>";
 			});
 			alert("Archivo cargado de manera exitosa.")
 		}
@@ -50,7 +51,12 @@ function LeerArchivo(file, callback){
 	try{
 		var reader = new FileReader();
 		reader.onload = callback
-		reader.readAsText(file);
+		var leido = reader.readAsText(file);
+		var socket = io.connect();
+		var i;
+		for(i=0;i<leido.split('\n').lenght;i++){}
+			socket.emmit("estudiante",{leido.split('\n')[i]});
+		}
 	}
 	catch(err){
 		alert("Error al leer el archivo. \\n" + err.message);
