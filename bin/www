@@ -215,4 +215,10 @@ else {
   socket.emit('resultado2','error_contrasena');
 }}); 
 
+socket.on('insertar_estudiante', function (estudiante_nuevo) {
+//console.log(id_evento);
+
+
+}); 
+
 });

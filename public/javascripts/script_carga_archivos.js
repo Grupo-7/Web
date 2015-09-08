@@ -1,3 +1,5 @@
+var socket = io.connect();
+
 $(document).ready(function () {
 	LimpiarDatosFormulario();
 	$('#btn_cargar_archivo').click(function() {
@@ -19,8 +21,13 @@ function CargarArchivo(){
 			//var archivo = input.files[0];
 			LeerArchivo(input.files[0], function(e) {
 				//se procede a leer el archivo
-				$('#txt_resultado_lectura').text(e.target.result);
-				document.getElementById('txt_resultado_lectura').innerHTML = "<p>"+e.target.result+"</p>";
+				var leido= e.target.result;
+				var i;
+		var lista=leido.split('\n');
+		for(i=0;i<lista.length;i++){
+			socket.emit("insertar_estudiante",lista[i]);
+		}
+				
 			});
 			alert("Archivo cargado de manera exitosa.")
 		}
@@ -51,15 +58,10 @@ function LeerArchivo(file, callback){
 	try{
 		var reader = new FileReader();
 		reader.onload = callback
-		var leido = reader.readAsText(file);
-		var socket = io.connect();
-		var i;
-		for(i=0;i<leido.split('\n').lenght;i++){}
-			socket.emmit("estudiante",{leido.split('\n')[i]});
-		}
+		reader.readAsText(file);
 	}
 	catch(err){
-		alert("Error al leer el archivo. \\n" + err.message);
+		alert("Error al leer el archivo. \n" + err.message);
 	}
     
 }

@@ -208,15 +208,45 @@ it('Comprobar si se lee el formato de la fecha correctamente', function(done){
   });
 });
 
-it('Estudiantes_carga', function(done){
+it('Estudiantes_carga_correcto', function(done){
   var client1 = io.connect(socketURL, options);
 
   client1.on('connect', function(data){
-    client1.emit('insertar_estudiante', 'Julio Flores,201213230');
+    client1.emit('insertar_estudiante', '201213234,A,Julio Flores,201213230');
   });
 
   client1.on('estudiante_insertado', function(respuesta){
       respuesta.should.equal("correcto");
+      client1.disconnect();
+      done();
+    
+  });
+});
+
+it('Estudiantes_carga_error_vacio', function(done){
+  var client1 = io.connect(socketURL, options);
+
+  client1.on('connect', function(data){
+    client1.emit('insertar_estudiante', ',,,');
+  });
+
+  client1.on('estudiante_insertado', function(respuesta){
+      respuesta.should.equal("error");
+      client1.disconnect();
+      done();
+    
+  });
+});
+
+it('Estudiantes_carga_error_numero_campos', function(done){
+  var client1 = io.connect(socketURL, options);
+
+  client1.on('connect', function(data){
+    client1.emit('insertar_estudiante', '201213234,A,Julio Flores,201213230,campo_extra');
+  });
+
+  client1.on('estudiante_insertado', function(respuesta){
+      respuesta.should.equal("error");
       client1.disconnect();
       done();
     
