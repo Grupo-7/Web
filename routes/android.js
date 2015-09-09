@@ -25,23 +25,26 @@ router.get('/', function(req, res, next) {
         }
     });
     
+    var result = null;
+    
     switch(query['op']){
         case 'asistir':
             console.log('asistir');
             var cadena = 'INSERT INTO ASISTENCIA VALUES('+query['evento']+',\''+query['carnet']+'\');';
             connection.query(cadena, function(err,result){
                 if(err){
-                    console.log('error!');
+                    res.render('android', { response: JSON.stringify({resultado: 'Error'}) });
                 }else{
-                    console.log('finalizado');
+                    res.render('android', { response: JSON.stringify({resultado: 'Exito'}) });
                 }
             });
-            br
+            break;
+            
         default:
-            console.log('Opcion no valida');
+            result = 'Invalido';
+            res.render('android', { response: result });
     }
     
-    res.render('android', { response: 'Probando' });
 });
 
 module.exports = router;
