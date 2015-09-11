@@ -1,46 +1,102 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale-1.0">
-    <title>Proyecto AyD1</title>
-    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
-    <script src="javascripts/jquery-2.1.4.min.js"></script>
-    <script src="javascripts/bootstrap.min.js"></script>
+<head>
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale-1.0">
+	<title>Proyecto AyD1</title>
+	<link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+	<script src="javascripts/jquery-2.1.4.min.js"></script>
+	<script src="javascripts/bootstrap.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<h1>Edición de Estudiantes</h1>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3>Nueva Sección</h3>
+					</div>
+					<div class="panel-body">
+						<form role="form">
+							<div class="form-group">
+								<label for="nombre_nueva_seccion">Nombre de la Nueva Sección</label>
+								<input id="nombre_nueva_seccion" class="form-control" type="text">
+								<input it="archivo_nueva_seccion" class="file form-control" type="file">
+								<button type="button" class="btn btn-block btn-primary" id="btn_nueva_seccion">Crear</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<h3>Agregar a Sección</h3>
+				<form role="form">
+					<div class="form-group">
+						<!--<input type="file" class="form-control"  id="flu_carga_archivo"  />-->
+						<!--jtello - 06/09/2015-->
+						<!--se agrego un filtro al file upload, asi como un id-->
+						<label for="lista_secciones">Seleccione la sección</label>
+						<select id="lista_secciones" class="form-control"></select>
+						<input id="flu_carga" type="file" class="file form-control" data-show-preview="false" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+						<button type="button" class="btn btn-block btn-primary" id="btn_cargar_archivo">Cargar</button>
+						<div id="txt_resultado_lectura" hidden="true"></div>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-4">
+				<h3>Borrar Sección</h3>
+				<form role="form">
+					<div class="form-group">
+						<label for="seccion_borrar_seccion">Sección a borrar</label>
+						<select id="seccion_borrar_seccion" class="form-control"></select>
+						<button type="button" class="btn btn-block btn-danger" id="btn_borrar_seccion">Borrar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Ver Listado</h2>
+				<form role="form">
+					<div class="form-group">
+						<select id="seccion_seleccionada" class="form-control"></select>
+					</div>
+				</form>
+				<div id="lista_estudiantes"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<h4>Agregar</h4>
+				<form role="form">
+					<div class="form-group">
+						<label for="carnet_nuevo_estudiante">Carnet</label>
+						<input id="carnet_nuevo_estudiante" class="form-control">
+						<label for="nombre_nuevo_estudiante">Nombre</label>
+						<input id="nombre_nuevo_estudiante" class="form-control">
+						<button type="button" class="btn btn-block" id="btn_agregar_estudiante">Agregar</button>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-6">
+				<h4>Borrar</h4>
+				<form role="form">
+					<div class="form-group">
+						<label for="carnet_borrar_estudiante">Carnet</label>
+						<input id="carnet_borrar_estudiante" class="form-control">
+						<button type="button" class="btn btn-block" id="btn_borrar_estudiante">Borrar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	<script src="javascripts/script_carga_archivos.js"></script>
-  </head>
-  <body>
-    <nav class="navbar navbar-default" role="navigation">
-      <div class="container">
-	<div class="navbar-header">
-	  <h1>Edición de Estudiantes</h1>
-	</div>
-      </div>
-    </nav>
-    <div class="container">
-      <div class="row">
-	<div class="col-md-6">
-	  <h3>Nueva Lista</h3>
-	  <form role="form">
-	    <div class="form-group">
-			<!--<input type="file" class="form-control"  id="flu_carga_archivo"  />-->
-			<!--jtello - 06/09/2015-->
-			<!--se agrego un filtro al file upload, asi como un id-->
-			<input id="flu_carga" type="file" class="file" data-show-preview="false" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-			<button type="button" class="btn btn-block btn-primary" id="btn_cargar_archivo">Cargar</button>
-			<div id="txt_resultado_lectura" hidden="true"></div>
-	    </div>
-	  </form>
-	</div>
-	<div class="col-md-6">
-	  <h3>Borrar Lista</h3>
-	</div>
-      </div>
-      <div class="row">
-	<div class="col-md-12">
-	  <h2>Listado</h2>
-	</div>
-      </div>
-    </div>
-  </body>
+</body>
 </html>

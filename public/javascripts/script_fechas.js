@@ -7,16 +7,16 @@ socket.on("Llenar", function (data) {
   list.options.length=0;
   data2=data.split(";");
   if(data2.length>0){
-  var contador=0;
-  while(contador<data2.length){
-  d1=data2[contador].split(",");
-  var newOp = document.createElement("option");
-  newOp.text = d1[0];
-  newOp.value = d1[1];
-  list.options.add(newOp);
-  contador++;}
-  }
-});
+    var contador=0;
+    while(contador<data2.length){
+      d1=data2[contador].split(",");
+      var newOp = document.createElement("option");
+      newOp.text = d1[0];
+      newOp.value = d1[1];
+      list.options.add(newOp);
+      contador++;}
+    }
+  });
 document.getElementById("Send").addEventListener("click", function () {
   var fecha_inicio=document.getElementById("fecha1").value.replace("T"," ")+":00";
   var fecha_fin=document.getElementById("fecha2").value.replace("T"," ")+":00";

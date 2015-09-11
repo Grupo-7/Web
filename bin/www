@@ -35,19 +35,16 @@ server.on('listening', onListening);
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
+ function normalizePort(val) {
   var port = parseInt(val, 10);
-
   if (isNaN(port)) {
     // named pipe
     return val;
   }
-
   if (port >= 0) {
     // port number
     return port;
   }
-
   return false;
 }
 
@@ -59,11 +56,9 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-
   var bind = typeof port === 'string'
     ? 'Pipe ' + port
     : 'Port ' + port;
-
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
@@ -98,20 +93,21 @@ var mysql = require('mysql');
 io = require('socket.io').listen(server);
 
 var connection = mysql.createConnection({
-   host: 'localhost',
-   user: 'root',
-   password: 'admin',
-   database: 'pruebas',
-   port: 3306
+  host: 'localhost',
+  user: 'root',
+  password: 'admin',
+  database: 'pruebas',
+  port: 3306
 });
 
-connection.connect(function(error){
-   if(error){
+connection.connect(
+  function(error){
+    if(error){
       throw error;
-   }else{
+    }else{
       //console.log('Conexion correcta.');
-   }
-});
+    }
+  });
 
 io.on('connection', function(socket){
 
@@ -216,42 +212,79 @@ else {
 }}); 
 
 socket.on('insertar_estudiante', function (estudiante_nuevo) {
-console.log(estudiante_nuevo);
-console.log('1');
-lista_campos=estudiante_nuevo.split(',');
-var vacio=0;
-var contador=0;
-for (var i = 0;i<lista_campos.length ;i++) {
-  if(lista_campos[i]==''){
-    vacio=1;
-    console.log(lista_campos[i]);
-  }
-  contador++;
-};
-console.log('2');
-if(vacio==0){
-  if(contador==4){
-    console.log('3');
-    var query = connection.query('INSERT INTO ALUMNO VALUES(?,?,?,?)', [lista_campos[0],lista_campos[1],lista_campos[2],lista_campos[3]], function(error, result){
-     if(error){
-      socket.emit('estudiante_insertado','error_vacio');
-       throw error;
-     }else{
-      socket.emit('estudiante_insertado','correcto');
-      //console.log(result);
-      console.log('4');
+  console.log(estudiante_nuevo);
+  lista_campos=estudiante_nuevo.data.split(',');
+  var vacio=0;
+  var contador=0;
+  for (var i = 0;i<lista_campos.length ;i++){
+    if(lista_campos[i]==''){
+      vacio=1;
+    }
+    contador++;
+  };
+  if(vacio==0){
+    if(contador==2){
+      try{
+        var query = connection.query('INSERT INTO ALUMNO(maestro,seccion,carnet,nombre) VALUES(?,?,?,?)', [estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0],lista_campos[1]], function(error, result){
+        if(error){
+          socket.emit('estudiante_insertado','error_vacio');
+          throw error;
+        }else{
+          socket.emit('estudiante_insertado','correcto');
+        }
+      });
+      }catch(error){
+        console.log(error.message);
+      }
+    }
+    else{
+      socket.emit('estudiante_insertado','error_campos');
     }
   }
-  );
+  else
+  {
+    socket.emit('estudiante_insertado','error_vacio');
   }
-  else{
-    socket.emit('estudiante_insertado','error_campos');
-  }
-}
-else
-{
-  socket.emit('estudiante_insertado','error_vacio');
-}
 }); 
 
+socket.on('solicitar_llenar_pag_estudiantes',function(){
+  var query = connection.query('SELECT NOMBRE FROM SECCION WHERE MAESTRO = ?', '201213234', function(error, result){
+    console.log(result);
+    if(error){
+      throw error;
+    }else{
+      if(result.length > 0){
+        var contador=0;
+        var cadena_resultado=result[0].NOMBRE;
+        contador++;
+        while(result.length>contador){
+          cadena_resultado=cadena_resultado+";"+result[contador].NOMBRE;
+          contador++;  
+        }
+        console.log(cadena_resultado);
+        socket.emit('llenar_pag_estudiantes',cadena_resultado);
+      }
+    }
+  });
+});
+
+  socket.on('solicitar_llenar_lista_estudiantes',function(seccion_a_llenar){
+    var query = connection.query('SELECT NOMBRE,CARNET FROM ALUMNO WHERE MAESTRO = ? AND SECCION = ?',['201213234',seccion_a_llenar],function(error,result){
+      if(error){
+        throw error;
+      }else{
+        console.log(result);
+        if(result.length > 0){
+          var contador = 0;
+          var cadena_resultado = result[0].NOMBRE + "~" + result[0].CARNET;
+          contador++;
+          while(result.length>contador){
+            cadena_resultado = cadena_resultado + ";" + result[contador].NOMBRE + "~" + result[contador].CARNET;
+            contador++;
+          }
+          socket.emit('llenar_lista_estudiantes',cadena_resultado);
+        }
+      }
+    });
+  });
 });
