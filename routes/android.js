@@ -40,6 +40,17 @@ router.get('/', function(req, res, next) {
             });
             break;
             
+        case 'eventos':
+            console.log('eventos');
+            var cadena = 'SELECT E.id_evento, E.nombre, E.inicio, E.final, E.estado FROM EVENTO E WHERE E.estado = 1;';
+            connection.query(cadena, function(err,result){
+                if(err){
+                    res.render('android', { response: JSON.stringify({resultado: 'Error'}) });
+                }else{
+                    res.render('android', { response: JSON.stringify({resultado: result}) });
+                }
+            });
+            break;    
         default:
             result = 'Invalido';
             res.render('android', { response: result });
