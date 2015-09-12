@@ -224,18 +224,26 @@ socket.on('insertar_estudiante', function (estudiante_nuevo) {
   };
   if(vacio==0){
     if(contador==2){
-      try{
-        var query = connection.query('INSERT INTO ALUMNO(maestro,seccion,carnet,nombre) VALUES(?,?,?,?)', [estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0],lista_campos[1]], function(error, result){
+      var query2 = connection.query('SELECT * FROM ALUMNO WHERE maestro = ? and seccion = ? and carnet = ?',[estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0]],function(error,result){
         if(error){
-          socket.emit('estudiante_insertado','error_vacio');
           throw error;
         }else{
-          socket.emit('estudiante_insertado','correcto');
+          if(result.length > 0){
+            console.log("ya estaba");
+          }else{
+            var query = connection.query('INSERT INTO ALUMNO(maestro,seccion,carnet,nombre) VALUES(?,?,?,?)', [estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0],lista_campos[1]], function(error, result){
+              if(error){
+                socket.emit('estudiante_insertado','error_vacio');
+                throw error;
+              }else{
+                socket.emit('estudiante_insertado','correcto');
+              }
+            });
+          }
         }
       });
-      }catch(error){
-        console.log(error.message);
-      }
+        
+      
     }
     else{
       socket.emit('estudiante_insertado','error_campos');
