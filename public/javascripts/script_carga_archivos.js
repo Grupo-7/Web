@@ -81,6 +81,7 @@ function CargarArchivo(){
 				var lista=leido.split('\n');
 				for(i=0;i<lista.length-1;i++){
 					socket.emit("insertar_estudiante",{maestro:num_maestro,seccion:document.getElementById('lista_secciones').value,data:lista[i]});
+					console.log(lista[i]);
 				}
 				
 			});

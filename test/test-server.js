@@ -212,7 +212,7 @@ describe("Main Server",function(){
     var client1 = io.connect(socketURL, options);
 
     client1.on('connect', function(data){
-      client1.emit('insertar_estudiante', {maestro:'201213234',seccion:'A',data:'Julio Flores,201213230'});
+      client1.emit('insertar_estudiante', {maestro:'201213234',seccion:'A',data:'201213230,Julio Flores'});
     });
 
     client1.on('estudiante_insertado', function(respuesta){
@@ -242,7 +242,7 @@ describe("Main Server",function(){
     var client1 = io.connect(socketURL, options);
 
     client1.on('connect', function(data){
-      client1.emit('insertar_estudiante', {maestro:'201213234',seccion:'A',data:'Julio Flores,201213230,campo_extra'});
+      client1.emit('insertar_estudiante', {maestro:'201213234',seccion:'A',data:'201213230,Julio Flores,campo_extra'});
     });
 
     client1.on('estudiante_insertado', function(respuesta){
