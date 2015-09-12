@@ -224,6 +224,7 @@ socket.on('insertar_estudiante', function (estudiante_nuevo) {
   };
   if(vacio==0){
     if(contador==2){
+      console.log(lista_campos[0]);
       var query2 = connection.query('SELECT * FROM ALUMNO WHERE maestro = ? and seccion = ? and carnet = ?',[estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0]],function(error,result){
         if(error){
           throw error;
@@ -294,5 +295,33 @@ socket.on('solicitar_llenar_pag_estudiantes',function(){
         }
       }
     });
+  });
+
+  socket.on('estudiante_individual',function(datos){
+    if(datos.modo == 'agregar'){
+      var query = connection.query('SELECT * FROM ALUMNO WHERE CARNET = ? AND MAESTRO = ? AND SECCION = ?',[datos.carnet,datos.maestro,datos.seccion],function(error,resultado){
+        if(error){
+          throw error;
+        }else{
+          if(resultado.length<=0){
+            var query2 = connection.query('INSERT INTO ALUMNO(carnet,nombre,maestro,seccion) VALUES(?,?,?,?)',[datos.carnet,datos.nombre,datos.maestro,datos.seccion],function(error,resultado){
+              if(error){
+                throw error;
+              }else{
+                socket.emit('resultado_individual','exito');
+              }
+            });
+          }
+        }
+      });
+    }else{
+      var query = connection.query('DELETE FROM ALUMNO WHERE CARNET = ? AND MAESTRO = ? AND SECCION = ?',[datos.carnet,datos.maestro,datos.seccion],function(error,resultado){
+        if(error){
+          throw error;
+        }else{
+          socket.emit('resultado_individual','exito');
+        }
+      });
+    }
   });
 });

@@ -1,4 +1,5 @@
 var socket = io.connect();
+var num_maestro = '201213234';
 socket.on("connect",function(){
 	socket.emit('solicitar_llenar_pag_estudiantes');
 });
@@ -41,6 +42,10 @@ socket.on('llenar_lista_estudiantes',function(datos){
 	espacio.innerHTML = listota;
 });
 
+socket.on('resultado_individual',function(){
+	socket.emit('solicitar_llenar_lista_estudiantes');
+});
+
 $(document).ready(function () {
 	LimpiarDatosFormulario();
 	$('#btn_cargar_archivo').click(function() {
@@ -48,6 +53,12 @@ $(document).ready(function () {
 	});
 	document.getElementById('seccion_seleccionada').onchange = function(){		
 		socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
+	};
+	document.getElementById('btn_agregar_estudiante').onclick = function(){
+		socket.emit('estudiante_individual',{modo:'agregar',nombre:document.getElementById('nombre_nuevo_estudiante').value,carnet:document.getElementById('carnet_nuevo_estudiante').value,maestro:num_maestro,seccion:document.getElementById('seccion_seleccionada').value});
+	};
+	document.getElementById('btn_borrar_estudiante').onclick = function(){
+		socket.emit('estudiante_individual',{modo:'borrar',carnet:document.getElementById('carnet_borrar_estudiante').value,maestro:num_maestro,seccion:document.getElementById('seccion_seleccionada').value});
 	};
 });
 
@@ -69,11 +80,12 @@ function CargarArchivo(){
 				var i;
 				var lista=leido.split('\n');
 				for(i=0;i<lista.length-1;i++){
-					socket.emit("insertar_estudiante",{maestro:'201213234',seccion:document.getElementById('lista_secciones').value,data:lista[i]});
+					socket.emit("insertar_estudiante",{maestro:num_maestro,seccion:document.getElementById('lista_secciones').value,data:lista[i]});
 				}
 				
 			});
-			alert("Archivo cargado de manera exitosa.")
+			alert("Archivo cargado de manera exitosa.");
+			//socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
 		}
 		else alert("Debe seleccionar un archivo.");
 	}

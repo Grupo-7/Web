@@ -260,8 +260,8 @@ describe("Main Server",function(){
     });
 
     client1.on('resultado_individual',function(respuesta){
-      respuesta.should.equal.('exito');
-      client1.disconect();
+      respuesta.should.equal('exito');
+      client1.disconnect();
       done();
     });
   });
