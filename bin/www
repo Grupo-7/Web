@@ -278,6 +278,7 @@ socket.on('solicitar_llenar_pag_estudiantes',function(){
   });
 });
 
+
   socket.on('solicitar_llenar_lista_estudiantes',function(seccion_a_llenar){
     var query = connection.query('SELECT NOMBRE,CARNET FROM ALUMNO WHERE MAESTRO = ? AND SECCION = ?',['201213234',seccion_a_llenar],function(error,result){
       if(error){

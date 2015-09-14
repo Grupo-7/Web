@@ -42,8 +42,8 @@ socket.on('llenar_lista_estudiantes',function(datos){
 	espacio.innerHTML = listota;
 });
 
-socket.on('resultado_individual',function(){
-	socket.emit('solicitar_llenar_lista_estudiantes');
+socket.on('resultado_individual',function(data){
+	socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
 });
 
 $(document).ready(function () {
@@ -73,21 +73,19 @@ function CargarArchivo(){
 		if(VerificarArchivo()){
 			//Se procede a hacer la carga del archivo
 			input = document.getElementById('flu_carga');
-			//var archivo = input.files[0];
 			LeerArchivo(input.files[0], function(e) {
-				//se procede a leer el archivo
 				var leido= e.target.result;
 				var i;
 				var lista=leido.split('\n');
 				for(i=0;i<lista.length-1;i++){
 					socket.emit("insertar_estudiante",{maestro:num_maestro,seccion:document.getElementById('lista_secciones').value,data:lista[i]});
-					console.log(lista[i]);
 				}
-				
+				setTimeout(function(){
+					socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
+				},1000);
 			});
-			alert("Archivo cargado de manera exitosa.");
-			//socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
-		}
+			
+		}	
 		else alert("Debe seleccionar un archivo.");
 	}
 	catch(err)
