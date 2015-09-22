@@ -213,7 +213,7 @@ else {
 
 socket.on('insertar_estudiante', function (estudiante_nuevo) {
   console.log(estudiante_nuevo);
-  lista_campos=estudiante_nuevo.data.split(',');
+  var lista_campos=estudiante_nuevo.data.split(',');
   var vacio=0;
   var contador=0;
   for (var i = 0;i<lista_campos.length ;i++){
@@ -224,18 +224,28 @@ socket.on('insertar_estudiante', function (estudiante_nuevo) {
   };
   if(vacio==0){
     if(contador==2){
-      try{
-        var query = connection.query('INSERT INTO ALUMNO(maestro,seccion,carnet,nombre) VALUES(?,?,?,?)', [estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0],lista_campos[1]], function(error, result){
+      //console.log(lista_campos[0]);
+      var query2 = connection.query('SELECT * FROM ALUMNO WHERE maestro = ? and seccion = ? and carnet = ?',[estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0]],function(error,result){
         if(error){
-          socket.emit('estudiante_insertado','error_vacio');
           throw error;
         }else{
-          socket.emit('estudiante_insertado','correcto');
+          if(result.length > 0){
+            console.log("ya estaba");
+          }else{
+            console.log('Insertando :O ' + estudiante_nuevo.maestro + ' ' + estudiante_nuevo.seccion + ' ' + lista_campos[0] + ' ' + lista_campos[1]);
+            var query = connection.query('INSERT INTO ALUMNO(maestro,seccion,carnet,nombre) VALUES(?,?,?,?)', [estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0],lista_campos[1]], function(error, result){
+              if(error){
+                socket.emit('estudiante_insertado','error_vacio');
+                throw error;
+              }else{
+                socket.emit('estudiante_insertado','correcto');
+              }
+            });
+          }
         }
       });
-      }catch(error){
-        console.log(error.message);
-      }
+        
+      
     }
     else{
       socket.emit('estudiante_insertado','error_campos');
@@ -268,6 +278,7 @@ socket.on('solicitar_llenar_pag_estudiantes',function(){
   });
 });
 
+
   socket.on('solicitar_llenar_lista_estudiantes',function(seccion_a_llenar){
     var query = connection.query('SELECT NOMBRE,CARNET FROM ALUMNO WHERE MAESTRO = ? AND SECCION = ?',['201213234',seccion_a_llenar],function(error,result){
       if(error){
@@ -286,5 +297,33 @@ socket.on('solicitar_llenar_pag_estudiantes',function(){
         }
       }
     });
+  });
+
+  socket.on('estudiante_individual',function(datos){
+    if(datos.modo == 'agregar'){
+      var query = connection.query('SELECT * FROM ALUMNO WHERE CARNET = ? AND MAESTRO = ? AND SECCION = ?',[datos.carnet,datos.maestro,datos.seccion],function(error,resultado){
+        if(error){
+          throw error;
+        }else{
+          if(resultado.length<=0){
+            var query2 = connection.query('INSERT INTO ALUMNO(carnet,nombre,maestro,seccion) VALUES(?,?,?,?)',[datos.carnet,datos.nombre,datos.maestro,datos.seccion],function(error,resultado){
+              if(error){
+                throw error;
+              }else{
+                socket.emit('resultado_individual','exito');
+              }
+            });
+          }
+        }
+      });
+    }else{
+      var query = connection.query('DELETE FROM ALUMNO WHERE CARNET = ? AND MAESTRO = ? AND SECCION = ?',[datos.carnet,datos.maestro,datos.seccion],function(error,resultado){
+        if(error){
+          throw error;
+        }else{
+          socket.emit('resultado_individual','exito');
+        }
+      });
+    }
   });
 });

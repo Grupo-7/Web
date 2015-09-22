@@ -36,44 +36,60 @@
 				</div>
 			</div>
 			<div class="col-md-4">
-				<h3>Agregar a Sección</h3>
-				<form role="form">
-					<div class="form-group">
-						<!--<input type="file" class="form-control"  id="flu_carga_archivo"  />-->
-						<!--jtello - 06/09/2015-->
-						<!--se agrego un filtro al file upload, asi como un id-->
-						<label for="lista_secciones">Seleccione la sección</label>
-						<select id="lista_secciones" class="form-control"></select>
-						<input id="flu_carga" type="file" class="file form-control" data-show-preview="false" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-						<button type="button" class="btn btn-block btn-primary" id="btn_cargar_archivo">Cargar</button>
-						<div id="txt_resultado_lectura" hidden="true"></div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3>Agregar a Sección</h3>
 					</div>
-				</form>
+					<div class="panel-body"
+						<form role="form">
+							<div class="form-group">
+								<!--<input type="file" class="form-control"  id="flu_carga_archivo"  />-->
+								<!--jtello - 06/09/2015-->
+								<!--se agrego un filtro al file upload, asi como un id-->
+								<label for="lista_secciones">Seleccione la sección</label>
+								<select id="lista_secciones" class="form-control"></select>
+								<input id="flu_carga" type="file" class="file form-control" data-show-preview="false" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+								<button type="button" class="btn btn-block btn-primary" id="btn_cargar_archivo">Cargar</button>
+								<div id="txt_resultado_lectura" hidden="true"></div>
+							</div>
+						</form>
+					</div>
+				</div>
 			</div>
 			<div class="col-md-4">
-				<h3>Borrar Sección</h3>
-				<form role="form">
-					<div class="form-group">
-						<label for="seccion_borrar_seccion">Sección a borrar</label>
-						<select id="seccion_borrar_seccion" class="form-control"></select>
-						<button type="button" class="btn btn-block btn-danger" id="btn_borrar_seccion">Borrar</button>
+				<div class="panel panel-danger">
+					<div class="panel-heading">
+						<h3>Borrar Sección</h3>
 					</div>
-				</form>
+					<div class="panel-body">
+						<form role="form">
+							<div class="form-group">
+								<label for="seccion_borrar_seccion">Sección a borrar</label>
+								<select id="seccion_borrar_seccion" class="form-control"></select>
+								<button type="button" class="btn btn-block btn-danger" id="btn_borrar_seccion">Borrar</button>
+							</div>
+						</form>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-				<h2>Ver Listado</h2>
-				<form role="form">
-					<div class="form-group">
-						<select id="seccion_seleccionada" class="form-control"></select>
-					</div>
-				</form>
-				<div id="lista_estudiantes"></div>
+				<div class="well well-default">
+					<h2>Ver Listado</h2>
+					<form role="form">
+						<div class="form-group">
+							<select id="seccion_seleccionada" class="form-control"></select>
+						</div>
+					</form>
+					<div id="lista_estudiantes"></div>
+				</div>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-2">
+			</div>
+			<div class="col-md-4">
 				<h4>Agregar</h4>
 				<form role="form">
 					<div class="form-group">
@@ -85,7 +101,7 @@
 					</div>
 				</form>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-4">
 				<h4>Borrar</h4>
 				<form role="form">
 					<div class="form-group">
@@ -94,6 +110,8 @@
 						<button type="button" class="btn btn-block" id="btn_borrar_estudiante">Borrar</button>
 					</div>
 				</form>
+			</div>
+			<div class="col-md-2">
 			</div>
 		</div>
 	</div>
