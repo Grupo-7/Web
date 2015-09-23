@@ -63,7 +63,7 @@ router.get('/', function(req, res, next) {
             break;    
         default:
             result = 'Invalido';
-            res.render('android', { response: result });
+            res.render('android', { response: JSON.stringify({response: result}) });
     }
     
 });
