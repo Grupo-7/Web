@@ -35,19 +35,16 @@ server.on('listening', onListening);
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
+ function normalizePort(val) {
   var port = parseInt(val, 10);
-
   if (isNaN(port)) {
     // named pipe
     return val;
   }
-
   if (port >= 0) {
     // port number
     return port;
   }
-
   return false;
 }
 
@@ -59,11 +56,9 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-
   var bind = typeof port === 'string'
     ? 'Pipe ' + port
     : 'Port ' + port;
-
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
@@ -98,67 +93,68 @@ var mysql = require('mysql');
 io = require('socket.io').listen(server);
 
 var connection = mysql.createConnection({
-   host: 'localhost',
-   user: 'root',
-   password: '123456',
-   database: 'prueba',
-   port: 3306
+  host: 'localhost',
+  user: 'root',
+  password: '123456',
+  database: 'prueba',
+  port: 3306
 });
 
-connection.connect(function(error){
-   if(error){
+connection.connect(
+  function(error){
+    if(error){
       throw error;
-   }else{
+    }else{
       //console.log('Conexion correcta.');
-   }
-});
+    }
+  });
 
 io.on('connection', function(socket){
 
-socket.on('solicitar_llenar', function () {
-var query = connection.query('SELECT id_evento,nombre FROM EVENTO where estado=1', function(error, result){
+  socket.on('solicitar_llenar', function () {
+    var query = connection.query('SELECT id_evento,nombre FROM EVENTO where estado=1', function(error, result){
       if(error){
-         throw error;
-      }else{
-         var resultado = result;
-         if(resultado.length > 0){
-	var contador=0;
-	var cadena_resultado=resultado[0].nombre+","+resultado[0].id_evento;
-	contador++;
-	while(resultado.length>contador){
-	var aux=resultado[contador].nombre+","+resultado[contador].id_evento;
-	cadena_resultado=cadena_resultado+";"+aux;
-	contador++;	
-	}
-	socket.emit('Llenar',cadena_resultado);
-         }else{
-		socket.emit('Llenar','');
+       throw error;
+     }else{
+       var resultado = result;
+       if(resultado.length > 0){
+         var contador=0;
+         var cadena_resultado=resultado[0].nombre+","+resultado[0].id_evento;
+         contador++;
+         while(resultado.length>contador){
+           var aux=resultado[contador].nombre+","+resultado[contador].id_evento;
+           cadena_resultado=cadena_resultado+";"+aux;
+           contador++;	
          }
+         socket.emit('Llenar',cadena_resultado);
+       }else{
+        socket.emit('Llenar','');
       }
-   }
-);
-});
+    }
+  }
+  );
+  });
 
- socket.on('insertar_evento', function (mensaje) {
-if(isNaN(mensaje.nombre)){
-var error_fecha=0;
-var f01=mensaje.fi.split("-");
-var mes1=parseInt(f01[1]);
-var dia1=parseInt(f01[2]);
-var año1=parseInt(f01[0]);
-if(mes1==2){
-if(dia1>29){
-error_fecha=1;
-}
-if(año1%4==0){
-if(año1%100==0){
-if(año1%400==0){
+  socket.on('insertar_evento', function (mensaje) {
+    if(isNaN(mensaje.nombre)){
+      var error_fecha=0;
+      var f01=mensaje.fi.split("-");
+      var mes1=parseInt(f01[1]);
+      var dia1=parseInt(f01[2]);
+      var año1=parseInt(f01[0]);
+      if(mes1==2){
+        if(dia1>29){
+          error_fecha=1;
+        }
+        if(año1%4==0){
+          if(año1%100==0){
+            if(año1%400==0){
 //año bisiesto
 }
 else{
 //año no bisiesto
 if(dia1>28){
-error_fecha=1;
+  error_fecha=1;
 }
 }
 }
@@ -169,50 +165,167 @@ else{
 else{
 //año no bisiesto
 if(dia1>28){
-error_fecha=1;
+  error_fecha=1;
 }
 }
 }
 if((mes1==4||mes1==6||mes1==9||mes1==11)&&dia1>30){
-error_fecha=1;
+  error_fecha=1;
 }
 if(error_fecha==0){
-var query = connection.query('INSERT INTO EVENTO(nombre,estado,inicio,final) VALUES(?,?,?,?)', [mensaje.nombre,1,mensaje.fi,mensaje.ff], function(error, result){
+  var query = connection.query('INSERT INTO EVENTO(nombre,estado,inicio,final) VALUES(?,?,?,?)', [mensaje.nombre,1,mensaje.fi,mensaje.ff], function(error, result){
    if(error){
-	socket.emit('resultado','error');
-      throw error;
+     socket.emit('resultado','error');
+     throw error;
    }else{
-socket.emit('resultado','correcto');
+    socket.emit('resultado','correcto');
       //console.log(result);
-   }
- }
-);
+    }
+  }
+  );
 }
 else{
-socket.emit('resultado','error01_fecha');
+  socket.emit('resultado','error01_fecha');
 }}
 else{
-socket.emit('resultado','error1');
-   }
-    }); 
+  socket.emit('resultado','error1');
+}
+}); 
 
- socket.on('terminar_evento', function (evento_terminar) {
+socket.on('terminar_evento', function (evento_terminar) {
 //console.log(id_evento);
 var comprobacion=modulos.comprobar1(evento_terminar.nombre_usuario,evento_terminar.contrasena,'123');
 if(comprobacion==1){
-var query = connection.query('UPDATE EVENTO SET estado=0 WHERE id_evento=? AND estado=1', [evento_terminar.id_evento_terminado], function(error, result){
+  var query = connection.query('UPDATE EVENTO SET estado=0 WHERE id_evento=? AND estado=1', [evento_terminar.id_evento_terminado], function(error, result){
    if(error){
-	socket.emit('resultado2','error');
-      throw error;
+     socket.emit('resultado2','error');
+     throw error;
    }else{
-socket.emit('resultado2','correcto');
+    socket.emit('resultado2','correcto');
       //console.log(result);
-   }
- }
-);
     }
+  }
+  );
+}
 else {
-socket.emit('resultado2','error_contrasena');
+  socket.emit('resultado2','error_contrasena');
 }}); 
 
+socket.on('insertar_estudiante', function (estudiante_nuevo) {
+  console.log(estudiante_nuevo);
+  var lista_campos=estudiante_nuevo.data.split(',');
+  var vacio=0;
+  var contador=0;
+  for (var i = 0;i<lista_campos.length ;i++){
+    if(lista_campos[i]==''){
+      vacio=1;
+    }
+    contador++;
+  };
+  if(vacio==0){
+    if(contador==2){
+      //console.log(lista_campos[0]);
+      var query2 = connection.query('SELECT * FROM ALUMNO WHERE maestro = ? and seccion = ? and carnet = ?',[estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0]],function(error,result){
+        if(error){
+          throw error;
+        }else{
+          if(result.length > 0){
+            console.log("ya estaba");
+          }else{
+            console.log('Insertando :O ' + estudiante_nuevo.maestro + ' ' + estudiante_nuevo.seccion + ' ' + lista_campos[0] + ' ' + lista_campos[1]);
+            var query = connection.query('INSERT INTO ALUMNO(maestro,seccion,carnet,nombre) VALUES(?,?,?,?)', [estudiante_nuevo.maestro,estudiante_nuevo.seccion,lista_campos[0],lista_campos[1]], function(error, result){
+              if(error){
+                socket.emit('estudiante_insertado','error_vacio');
+                throw error;
+              }else{
+                socket.emit('estudiante_insertado','correcto');
+              }
+            });
+          }
+        }
+      });
+        
+      
+    }
+    else{
+      socket.emit('estudiante_insertado','error_campos');
+    }
+  }
+  else
+  {
+    socket.emit('estudiante_insertado','error_vacio');
+  }
+}); 
+
+socket.on('solicitar_llenar_pag_estudiantes',function(){
+  var query = connection.query('SELECT NOMBRE FROM SECCION WHERE MAESTRO = ?', '201213234', function(error, result){
+    console.log(result);
+    if(error){
+      throw error;
+    }else{
+      if(result.length > 0){
+        var contador=0;
+        var cadena_resultado=result[0].NOMBRE;
+        contador++;
+        while(result.length>contador){
+          cadena_resultado=cadena_resultado+";"+result[contador].NOMBRE;
+          contador++;  
+        }
+        console.log(cadena_resultado);
+        socket.emit('llenar_pag_estudiantes',cadena_resultado);
+      }
+    }
+  });
+});
+
+
+  socket.on('solicitar_llenar_lista_estudiantes',function(seccion_a_llenar){
+    var query = connection.query('SELECT NOMBRE,CARNET FROM ALUMNO WHERE MAESTRO = ? AND SECCION = ?',['201213234',seccion_a_llenar],function(error,result){
+      if(error){
+        throw error;
+      }else{
+        console.log(result);
+        if(result.length > 0){
+          var contador = 0;
+          var cadena_resultado = result[0].NOMBRE + "~" + result[0].CARNET;
+          contador++;
+          while(result.length>contador){
+            cadena_resultado = cadena_resultado + ";" + result[contador].NOMBRE + "~" + result[contador].CARNET;
+            contador++;
+          }
+          socket.emit('llenar_lista_estudiantes',cadena_resultado);
+        }
+      }
+    });
+  });
+
+
+
+  socket.on('estudiante_individual',function(datos){
+    if(datos.modo == 'agregar'){
+      var query = connection.query('SELECT * FROM ALUMNO WHERE CARNET = ? AND MAESTRO = ? AND SECCION = ?',[datos.carnet,datos.maestro,datos.seccion],function(error,resultado){
+        if(error){
+          throw error;
+        }else{
+          if(resultado.length<=0){
+            var query2 = connection.query('INSERT INTO ALUMNO(carnet,nombre,maestro,seccion) VALUES(?,?,?,?)',[datos.carnet,datos.nombre,datos.maestro,datos.seccion],function(error,resultado){
+              if(error){
+                throw error;
+              }else{
+                socket.emit('resultado_individual','exito');
+              }
+            });
+          }
+        }
+      });
+    }else{
+      var query = connection.query('DELETE FROM ALUMNO WHERE CARNET = ? AND MAESTRO = ? AND SECCION = ?',[datos.carnet,datos.maestro,datos.seccion],function(error,resultado){
+        if(error){
+          throw error;
+        }else{
+          socket.emit('resultado_individual','exito');
+        }
+      });
+    }
+  });
 });
