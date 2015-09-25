@@ -95,8 +95,8 @@ io = require('socket.io').listen(server);
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'admin',
-  database: 'pruebas',
+  password: '123456',
+  database: 'prueba',
   port: 3306
 });
 
@@ -295,6 +295,26 @@ socket.on('solicitar_llenar_pag_estudiantes',function(){
           }
           socket.emit('llenar_lista_estudiantes',cadena_resultado);
         }
+      }
+    });
+  });
+
+  socket.on('validar_login',function(usuario_datos){
+    var query = connection.query('SELECT CARNET FROM USUARIO WHERE CARNET = ? AND PASSWORD=?',[usuario_datos.carnet,usuario_datos.password],function(error,result){
+      if(error){
+        throw error;
+      }else{
+        if(result.length > 0){
+		valor_r=1;
+		descripcion_r='Los datos son correctos puede continuar';
+        }
+	else {
+	 	valor_r=0;
+		descripcion_r='Los datos no son correctos no puede continuar';
+	}
+	socket.emit('resultado_login',{
+					valor:valor_r,
+					descripcion:descripcion_r});
       }
     });
   });

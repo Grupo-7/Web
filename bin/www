@@ -299,6 +299,26 @@ socket.on('solicitar_llenar_pag_estudiantes',function(){
     });
   });
 
+  socket.on('validar_login',function(usuario_datos){
+    var query = connection.query('SELECT CARNET FROM USUARIO WHERE CARNET = ? AND PASSWORD=?',[usuario_datos.carnet,usuario_datos.password],function(error,result){
+      if(error){
+        throw error;
+      }else{
+        if(result.length > 0){
+		valor_r=1;
+		descripcion_r='Los datos son correctos puede continuar';
+        }
+	else {
+	 	valor_r=0;
+		descripcion_r='Los datos no son correctos no puede continuar';
+	}
+	socket.emit('resultado_login',{
+					valor:valor_r,
+					descripcion:descripcion_r});
+      }
+    });
+  });
+
   socket.on('estudiante_individual',function(datos){
     if(datos.modo == 'agregar'){
       var query = connection.query('SELECT * FROM ALUMNO WHERE CARNET = ? AND MAESTRO = ? AND SECCION = ?',[datos.carnet,datos.maestro,datos.seccion],function(error,resultado){
