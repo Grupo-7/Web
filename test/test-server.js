@@ -256,7 +256,7 @@ describe("Main Server",function(){
     var client1 = io.connect(socketURL,options);
 
     client1.on('connect',function(data){
-      client1.emit('estudiante_individual',{modo:'agregar',nombre:'Julio Flores',carnet:'201213230',maestro:'201213234',seccion:'A'});
+      client1.emit('estudiante_individual',{modo:'agregar',nombre:'Julio 2',carnet:'200013230',maestro:'201213234',seccion:'A'});
     });
 
     client1.on('resultado_individual',function(respuesta){
