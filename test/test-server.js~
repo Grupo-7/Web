@@ -280,7 +280,8 @@ client1.on('connect', function(data){
     });
 
     client1.on('resultado_login', function(respuesta){
-	respuesta.should.equal('correcto');
+	respuesta_aux=respuesta.valor;
+	respuesta_aux.should.equal(1);
 client1.disconnect();
       done();
     });
@@ -300,7 +301,8 @@ client1.on('connect', function(data){
     });
 
     client1.on('resultado_login', function(respuesta){
-	respuesta.should.equal('incorrecto');
+	respuesta_aux=respuesta.valor;
+	respuesta_aux.should.equal(0);
 client1.disconnect();
       done();
     });

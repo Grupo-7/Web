@@ -95,8 +95,8 @@ io = require('socket.io').listen(server);
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '123456',
-  database: 'prueba',
+  password: 'admin',
+  database: 'pruebas',
   port: 3306
 });
 
@@ -298,8 +298,6 @@ socket.on('solicitar_llenar_pag_estudiantes',function(){
       }
     });
   });
-
-
 
   socket.on('estudiante_individual',function(datos){
     if(datos.modo == 'agregar'){
