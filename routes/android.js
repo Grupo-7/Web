@@ -61,6 +61,27 @@ router.get('/', function(req, res, next) {
                 }
             });
             break;    
+	case 'login':
+		var query = connection.query('SELECT CARNET FROM USUARIO WHERE CARNET = ? AND PASSWORD=?',[usuario_datos.carnet,usuario_datos.password],function(error,result){
+     			 if(error){
+        			throw error;
+				valor_r=2;
+				descripcion_r='No es posible realizar la conexión con la base de datos';
+      			}else{
+        		if(result.length > 0){
+				valor_r=1;
+				descripcion_r='Los datos son correctos puede continuar';
+        		}
+			else {
+	 			valor_r=0;
+				descripcion_r='Los datos no son correctos no puede continuar';
+			}
+				
+					res.render('android', { response: JSON.stringify({
+					valor:valor_r,
+					descripcion:descripcion_r});
+      			}
+    		});
         default:
             result = 'Invalido';
             res.render('android', { response: JSON.stringify({response: result}) });
