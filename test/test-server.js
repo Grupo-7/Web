@@ -208,6 +208,7 @@ describe("Main Server",function(){
     });
   });
 
+
   it('Estudiantes_carga_correcto', function(done){
     var client1 = io.connect(socketURL, options);
 
@@ -264,6 +265,48 @@ describe("Main Server",function(){
       client1.disconnect();
       done();
     });
+  });
+
+
+it('Login_correcto_darpermiso',function(done){
+    var usuario='222222222';
+	var contarasena='normal';
+ var client1 = io.connect(socketURL, options);
+client1.on('connect', function(data){
+      client1.emit('validar_login', {
+        carnet:usuario,
+        password:contarasena});
+
+    });
+
+    client1.on('resultado_login', function(respuesta){
+	respuesta_aux=respuesta.valor;
+	respuesta_aux.should.equal(1);
+client1.disconnect();
+      done();
+    });
+	
+
+  });
+
+it('Login_incorrecto_nodarpermiso',function(done){
+       var usuario='este usuario fijo no existe';
+	var contarasena='esta contraseña fijo no existe';
+ var client1 = io.connect(socketURL, options);
+client1.on('connect', function(data){
+      client1.emit('validar_login', {
+        carnet:usuario,
+        password:contarasena});
+
+    });
+
+    client1.on('resultado_login', function(respuesta){
+	respuesta_aux=respuesta.valor;
+	respuesta_aux.should.equal(0);
+client1.disconnect();
+      done();
+    });
+
   });
 
 

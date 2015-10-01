@@ -65,8 +65,6 @@ router.get('/', function(req, res, next) {
 		var query = connection.query('SELECT CARNET FROM USUARIO WHERE CARNET = ? AND PASSWORD=?',[usuario_datos.carnet,usuario_datos.password],function(error,result){
      			 if(error){
         			throw error;
-				valor_r=2;
-				descripcion_r='No es posible realizar la conexión con la base de datos';
       			}else{
         		if(result.length > 0){
 				valor_r=1;
