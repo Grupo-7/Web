@@ -208,7 +208,7 @@ describe("Main Server",function(){
     });
   });
 
-/*
+
   it('Estudiantes_carga_correcto', function(done){
     var client1 = io.connect(socketURL, options);
 
@@ -257,7 +257,7 @@ describe("Main Server",function(){
     var client1 = io.connect(socketURL,options);
 
     client1.on('connect',function(data){
-      client1.emit('estudiante_individual',{modo:'agregar',nombre:'Julio Flores',carnet:'201213230',maestro:'201213234',seccion:'A'});
+      client1.emit('estudiante_individual',{modo:'agregar',nombre:'Julio 2',carnet:'200013230',maestro:'201213234',seccion:'A'});
     });
 
     client1.on('resultado_individual',function(respuesta){
@@ -267,7 +267,7 @@ describe("Main Server",function(){
     });
   });
 
-*/
+
 it('Login_correcto_darpermiso',function(done){
     var usuario='222222222';
 	var contarasena='normal';
@@ -304,6 +304,33 @@ client1.on('connect', function(data){
 	respuesta_aux=respuesta.valor;
 	respuesta_aux.should.equal(0);
 client1.disconnect();
+      done();
+    });
+
+  });
+
+
+it('Crearcuenta_correcto_exito',function(done){
+       var usuario='200113234';
+	var contarasena='123';
+	var nombre1= 'Pedro';
+	var apellido1= 'Gutierrez'
+ var client1 = io.connect(socketURL, options);
+client1.on('connect', function(data){
+      client1.emit('crear_cuenta', {
+        carnet:usuario,
+        password:contarasena,
+	nombre: nombre1,
+	apellido: apellido1,
+	rol:0,
+	bloqueada:0	});
+
+    });
+
+    client1.on('resultado_crear_cuenta', function(respuesta){
+	respuesta_aux=respuesta.valor;
+	respuesta_aux.should.equal(1);
+	client1.disconnect();
       done();
     });
 
