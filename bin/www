@@ -346,4 +346,51 @@ socket.on('solicitar_llenar_pag_estudiantes',function(){
       });
     }
   });
+  
+  socket.on('reporte_solicitar_eventos',function(data){
+    var query = connection.query('SELECT ID_EVENTO,NOMBRE FROM EVENTO',function(error,result){
+      if(error){
+        throw error;
+      }else{
+        console.log(result);
+        if(result.length > 0){
+          var contador = 0;
+          var cadena_resultado = result[0].ID_EVENTO + "~" + result[0].NOMBRE + " " + result[0].ID_EVENTO;
+          contador++;
+          while(result.length>contador){
+            cadena_resultado = cadena_resultado + ";" + result[contador].ID_EVENTO + "~" + result[contador].NOMBRE + " " + result[contador].ID_EVENTO;
+            contador++;
+          }
+          socket.emit('reporte_eventos',cadena_resultado);
+        }
+      }
+    });
+  });
+  
+  socket.on('ver_reporte',function(datos){
+    if(datos!=''){
+      var query = connection.query('SELECT E.CARNET,E.NOMBRE  FROM ALUMNO E, ASISTENCIA A WHERE A.ID_EVENTO = ? AND E.CARNET = A.CARNET',[datos],function(error,resultado){
+        if(error){
+          throw error;
+          socket.emit('resultado_reporte','error');
+        }else{
+          if(resultado.length > 0){
+            var contador = 0;
+            var cadena_resultado = resultado[0].CARNET + "~" + resultado[0].NOMBRE;
+            contador++;
+            while(resultado.length>contador){
+              cadena_resultado = cadena_resultado + ";" + resultado[contador].CARNET + "~" + resultado[contador].NOMBRE;
+              contador++;
+            }
+            socket.emit('resultado_reporte',cadena_resultado);
+          }else{
+            socket.emit('resultado_reporte','');
+          }
+        }
+      });
+    }else{
+      socket.emit('resultado_reporte','error');
+    }
+  });
+
 });
