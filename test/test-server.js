@@ -208,10 +208,7 @@ describe("Main Server",function(){
     });
   });
 
-<<<<<<< HEAD
 
-  it('Estudiantes_carga_correcto', function(done){
-=======
 // Necesita arreglarse - Julio
 /*  it('Estudiantes_carga_correcto', function(done){
 >>>>>>> dev_julio
@@ -257,6 +254,7 @@ describe("Main Server",function(){
       done();
     });
   });
+  
 // Necesita arreglarse - Julio
 /*  it('Estudiantes_estudiante_individual_agregar_exito',function(done){
     var client1 = io.connect(socketURL,options);
@@ -286,7 +284,6 @@ describe("Main Server",function(){
     });
   });*/
 
-<<<<<<< HEAD
 it('Login_correcto_darpermiso',function(done){
     var usuario='222222222';
 	var contarasena='normal';
@@ -328,8 +325,6 @@ client1.disconnect();
 
   });
 
-
-=======
   it('reporte_ver_reporte_error',function(done){
     var cliente = io.connect(socketURL,options);
 
@@ -343,6 +338,50 @@ client1.disconnect();
       done();
     });
   });
->>>>>>> dev_julio
+
+it('Crearcuenta_correcto_exito',function(done){
+       var usuario='200113234';
+	var contarasena='123';
+	var nombre1= 'Pedro';
+	var apellido1= 'Gutierrez'
+ var client1 = io.connect(socketURL, options);
+client1.on('connect', function(data){
+      client1.emit('crear_cuenta', {
+        carnet:usuario,
+        password:contarasena,
+	nombre: nombre1,
+	apellido: apellido1,
+	rol:0,
+	bloqueada:0	});
+
+    });
+
+    client1.on('resultado_crear_cuenta', function(respuesta){
+	respuesta_aux=respuesta.valor;
+	respuesta_aux.should.equal(1);
+	client1.disconnect();
+      done();
+    });
+
+  });
+
+it('Eliminarcuenta_correcto_exito',function(done){
+       var usuario='200113234';
+ var client1 = io.connect(socketURL, options);
+client1.on('connect', function(data){
+      client1.emit('eliminar_cuenta', {
+        carnet:usuario});
+
+    });
+
+    client1.on('resultado_eliminar_cuenta', function(respuesta){
+	respuesta_aux=respuesta.valor;
+	respuesta_aux.should.equal(1);
+	client1.disconnect();
+      done();
+    });
+
+  });
+
 });
 
