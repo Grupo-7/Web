@@ -281,5 +281,18 @@ describe("Main Server",function(){
     });
   });*/
 
+  it('reporte_ver_reporte_error',function(done){
+    var cliente = io.connect(socketURL,options);
+
+    cliente.on('connect',function(data){
+      cliente.emit('ver_reporte','');
+    });
+
+    cliente.on('resultado_reporte',function(data){
+      data.should.equal('error');
+      cliente.disconnect();
+      done();
+    });
+  });
 });
 
