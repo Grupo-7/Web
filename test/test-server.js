@@ -383,5 +383,19 @@ client1.on('connect', function(data){
 
   });
 
+
+  it('crear_seccion_resultado_error',function(done){
+    var cliente = io.connect(socketURL,options);
+
+    cliente.on('connect',function(data){
+      cliente.emit('crear_seccion','');
+    });
+
+    cliente.on('crear_seccion_resultado',function(data){
+      data.should.equal('error');
+      cliente.disconnect();
+      done();
+    });
+  });
 });
 
