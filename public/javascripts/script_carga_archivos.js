@@ -46,11 +46,22 @@ socket.on('resultado_individual',function(data){
 	socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
 });
 
+socket.on('crear_seccion_resultado',function(data){
+	if(data == 'exito'){
+		CargarArchivo('1');
+	}else{
+		console.log('no funciono');
+	}
+});
+
 $(document).ready(function () {
 	LimpiarDatosFormulario();
 	$('#btn_cargar_archivo').click(function() {
-		CargarArchivo();
+		CargarArchivo('0');
 	});
+	document.getElementById('btn_nueva_seccion').onclick = function(){
+		socket.emit('crear_seccion',{nombre:document.getElementById('nombre_nueva_seccion').value,maestro:num_maestro});
+	};
 	document.getElementById('seccion_seleccionada').onchange = function(){		
 		socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
 	};
@@ -68,20 +79,32 @@ function LimpiarDatosFormulario(){
 }
 
 //Funcion que carga el archivo al servidor
-function CargarArchivo(){
+function CargarArchivo(modo){
 	try{
-		if(VerificarArchivo()){
+		if(VerificarArchivo(modo)){
 			//Se procede a hacer la carga del archivo
-			input = document.getElementById('flu_carga');
+			if(modo == 0){
+				input = document.getElementById('flu_carga');
+			}else{
+				input = document.getElementById('flu_carga2');
+			}
 			LeerArchivo(input.files[0], function(e) {
 				var leido= e.target.result;
 				var i;
 				var lista=leido.split('\n');
 				for(i=0;i<lista.length-1;i++){
-					socket.emit("insertar_estudiante",{maestro:num_maestro,seccion:document.getElementById('lista_secciones').value,data:lista[i]});
+					if(modo == 0){
+						socket.emit("insertar_estudiante",{maestro:num_maestro,seccion:document.getElementById('lista_secciones').value,data:lista[i]});
+					}else if(modo==1){
+						socket.emit("insertar_estudiante",{maestro:num_maestro,seccion:document.getElementById('nombre_nueva_seccion').value,data:lista[i]});
+					}
 				}
 				setTimeout(function(){
-					socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
+					if(modo ==1){
+						socket.emit('solicitar_llenar_pag_estudiantes');
+					}else{
+						socket.emit('solicitar_llenar_lista_estudiantes',document.getElementById('seccion_seleccionada').value);
+					}
 				},1000);
 			});
 			
@@ -95,10 +118,14 @@ function CargarArchivo(){
 }
 
 //Funcion que verifica el archivo
-function VerificarArchivo()
+function VerificarArchivo(modo)
 {
 	try{
-		var Archivo = $("#flu_carga").val();
+		if(modo == 0){
+			var Archivo = $("#flu_carga").val();
+		}else{
+			var Archivo = $("#flu_carga2").val();
+		}
 		if (Archivo == "") return false;
 		return true;
 	}

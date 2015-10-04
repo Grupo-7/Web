@@ -28,7 +28,7 @@
 							<div class="form-group">
 								<label for="nombre_nueva_seccion">Nombre de la Nueva Sección</label>
 								<input id="nombre_nueva_seccion" class="form-control" type="text">
-								<input it="archivo_nueva_seccion" class="file form-control" type="file">
+								<input id="flu_carga2" type="file" class="file form-control" data-show-preview="false" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
 								<button type="button" class="btn btn-block btn-primary" id="btn_nueva_seccion">Crear</button>
 							</div>
 						</form>
