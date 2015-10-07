@@ -62,21 +62,55 @@ router.get('/', function(req, res, next) {
             });
             break;    
 	    case 'login':
-		    var query = connection.query('SELECT CARNET FROM USUARIO WHERE CARNET = ? AND PASSWORD=?',[usuario_datos.carnet,usuario_datos.password],function(error,result){
+		    var query = 'SELECT carnet,bloqueada,libre_hasta,password FROM USUARIO WHERE CARNET = \''+query['carnet']+'\';';
+            connection.query(query,function(error,result){
      			 if(error){
-        			throw error;
-				    valor_r=2;
-				    descripcion_r='No es posible realizar la conexión con la base de datos';
+                    //ERROR DE CONEXION
+                    res.render('android', { response: JSON.stringify({response: 'No se puede conectar a la base de datos.', codigo: 0}) });
       			 }else {
-        		    if(result.length > 0){
-				    valor_r=1;
-				    descripcion_r='Los datos son correctos puede continuar';
-        		    }else {
-	 			        valor_r=0;
-				        descripcion_r='Los datos no son correctos no puede continuar';
-			        }
-				
-					res.render('android', { response: JSON.stringify({ valor: valor_r, descripcion: descripcion_r})});
+        		    if (result.length > 0){
+                        if(result['password'] === query['password']){
+                            //CREDENCIALES CORRECTAS
+                            if(result['bloqueada'] == 0){
+                                //LA CUENTA NO ESTA BLOQUEADA
+                                res.render('android', { response: JSON.stringify({response: 'Login exitoso.', codigo: 1}) });
+                            }else{
+                                //CUENTA BLOQUEADA
+                                var query = 'SELECT carnet FROM USUARIO WHERE carnet=\''+query['carnet']+'\' AND libre_hasta < NOW();';
+                                connection.query(query,function(err,result){
+                                    if(result.length > 0){
+                                        //YA PUEDE DESBLOQUEARSE
+                                        var query = 'UPDATE USUARIO SET bloqueada=0 WHERE carnet=\''+query['carnet']+'\';'
+                                        connection.query(query,function(err,result){
+                                            res.render('android', { response: JSON.stringify({response: 'La cuenta fue desbloqueada. Login exitoso.', codigo: 1}) });
+                                        });
+                                    }else{
+                                        //SIGUE BLOQUEADA
+                                        res.render('android', { response: JSON.stringify({response: 'Su cuenta esta bloqueada.', codigo: 0}) });
+                                    }
+                                });
+                            }
+                        }else{
+                            //CREDENCIALES INCORRECTAS
+                            if(result['bloqueada'] >= 2){
+                                //BLOQUEAR
+                                var query = 'UPDATE USUARIO SET bloqueada=3,libre_hasta=ADDTIME(NOW(),\'3:00:00\') WHERE carnet=\'' + result['carnet'] + '\';';
+                                connection.query(query,function(err,result){
+                                    res.render('android', { response: JSON.stringify({response: 'Por seguridad se ha bloqueado esta cuenta.', codigo: 0}) });
+                                });
+                            }else{
+                                //SUMAR A INTENTOS FALLIDOS
+                                var b = result['bloqueada']+1;
+                                var query = 'UPDATE USUARIO SET bloqueada=' + b + ' WHERE carnet=\'' + result['carnet'] + '\';';
+                                connection.query(query,function(err,result){
+                                    res.render('android', { response: JSON.stringify({response: 'Credenciales incorrectas.', codigo: 0}) });
+                                });
+                            }
+                        }
+                    }else{
+                        //CUENTA NO EXISTE
+                        res.render('android', { response: JSON.stringify({response: 'Cuenta no valida.', codigo: 0}) });
+                    }
       			}
     		});
         default:
