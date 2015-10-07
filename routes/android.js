@@ -62,26 +62,26 @@ router.get('/', function(req, res, next) {
             });
             break;    
 	    case 'login':
-		    var query = 'SELECT carnet,bloqueada,libre_hasta,password FROM USUARIO WHERE CARNET = \''+query['carnet']+'\';';
-            connection.query(query,function(error,result){
+		    var cadena = 'SELECT carnet,bloqueada,libre_hasta,password FROM USUARIO WHERE CARNET = \''+query['carnet']+'\';';
+            connection.query(cadena,function(error,result){
      			 if(error){
                     //ERROR DE CONEXION
                     res.render('android', { response: JSON.stringify({response: 'No se puede conectar a la base de datos.', codigo: 0}) });
       			 }else {
         		    if (result.length > 0){
-                        if(result['password'] === query['password']){
+                        if(result[0]['password'] === query['password']){
                             //CREDENCIALES CORRECTAS
-                            if(result['bloqueada'] == 0){
+                            if(result[0]['bloqueada'] == 0){
                                 //LA CUENTA NO ESTA BLOQUEADA
                                 res.render('android', { response: JSON.stringify({response: 'Login exitoso.', codigo: 1}) });
                             }else{
                                 //CUENTA BLOQUEADA
-                                var query = 'SELECT carnet FROM USUARIO WHERE carnet=\''+query['carnet']+'\' AND libre_hasta < NOW();';
-                                connection.query(query,function(err,result){
+                                var cadena = 'SELECT carnet FROM USUARIO WHERE carnet=\''+query['carnet']+'\' AND libre_hasta < NOW();';
+                                connection.query(cadena,function(err,result){
                                     if(result.length > 0){
                                         //YA PUEDE DESBLOQUEARSE
-                                        var query = 'UPDATE USUARIO SET bloqueada=0 WHERE carnet=\''+query['carnet']+'\';'
-                                        connection.query(query,function(err,result){
+                                        var cadena = 'UPDATE USUARIO SET bloqueada=0 WHERE carnet=\''+query['carnet']+'\';'
+                                        connection.query(cadena,function(err,result){
                                             res.render('android', { response: JSON.stringify({response: 'La cuenta fue desbloqueada. Login exitoso.', codigo: 1}) });
                                         });
                                     }else{
@@ -92,17 +92,17 @@ router.get('/', function(req, res, next) {
                             }
                         }else{
                             //CREDENCIALES INCORRECTAS
-                            if(result['bloqueada'] >= 2){
+                            if(result[0]['bloqueada'] >= 2){
                                 //BLOQUEAR
-                                var query = 'UPDATE USUARIO SET bloqueada=3,libre_hasta=ADDTIME(NOW(),\'3:00:00\') WHERE carnet=\'' + result['carnet'] + '\';';
-                                connection.query(query,function(err,result){
+                                var cadena = 'UPDATE USUARIO SET bloqueada=3,libre_hasta=ADDTIME(NOW(),\'3:00:00\') WHERE carnet=\'' + result[0]['carnet'] + '\';';
+                                connection.query(cadena,function(err,result){
                                     res.render('android', { response: JSON.stringify({response: 'Por seguridad se ha bloqueado esta cuenta.', codigo: 0}) });
                                 });
                             }else{
                                 //SUMAR A INTENTOS FALLIDOS
-                                var b = result['bloqueada']+1;
-                                var query = 'UPDATE USUARIO SET bloqueada=' + b + ' WHERE carnet=\'' + result['carnet'] + '\';';
-                                connection.query(query,function(err,result){
+                                var b = parseInt(result[0]['bloqueada'])+1;
+                                var cadena = 'UPDATE USUARIO SET bloqueada=' + b + ' WHERE carnet=\'' + result[0]['carnet'] + '\';';
+                                connection.query(cadena,function(err,result){
                                     res.render('android', { response: JSON.stringify({response: 'Credenciales incorrectas.', codigo: 0}) });
                                 });
                             }
@@ -113,6 +113,7 @@ router.get('/', function(req, res, next) {
                     }
       			}
     		});
+    		break;
         default:
             result = 'Invalido';
             res.render('android', { response: JSON.stringify({response: result}) });
