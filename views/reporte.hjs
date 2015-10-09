@@ -17,6 +17,7 @@
 		</div>
 	</nav>
 	<div class="container">
+		<a href="/"><span class="glyphicon glyphicon-arrow-left"></span>Atras</a>
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h1>Ver Reporte</h1>
