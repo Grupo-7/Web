@@ -3,7 +3,11 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('estudiantes');
+	if(req.session.carnet==null){
+  		res.redirect('/');
+	}else{
+		res.render('estudiantes', { ucar: req.session.carnet });
+	}
 });
 
 module.exports = router;
