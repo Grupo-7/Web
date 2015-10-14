@@ -418,4 +418,59 @@ socket.on('crear_seccion',function(data){
     socket.emit('crear_seccion_resultado','error')
   }
 });
+
+socket.on('solicitar_llenar_usuarios',function(){
+var query = connection.query('SELECT CARNET FROM USUARIO',function(error,result){
+    if(error){
+      throw error;
+    }else{
+      console.log(result);
+      if(result.length > 0){
+        var contador = 0;
+        var cadena_resultado = result[0].CARNET;
+        contador++;
+        while(result.length>contador){
+          cadena_resultado = cadena_resultado + ";" + result[contador].CARNET;
+          contador++;
+        }
+        socket.emit('llenar_usuarios',cadena_resultado);
+      }
+    }
+  });
+});
+socket.on('insertar_usuario',function(data){
+if(data != ''){
+    var query1 = connection.query('SELECT * FROM USUARIO WHERE CARNET = ?',[data.c],function(error,resultado){
+      if(error){
+        throw error;
+        socket.emit('insertar_usuario_resultado','error');
+      }else{
+        if(resultado.length > 0){
+          socket.emit('insertar_usuario_resultado','error');
+        }else{
+          var query2 = connection.query('INSERT INTO USUARIO(CARNET,PASSWORD,NOMBRE,APELLIDO,ROL,BLOQUEADA) VALUES(?,?,?,?,?,?)',[data.c,data.p,data.n,data.a,data.r,data.b],function(error,resultado){
+            if(error){
+              throw error;
+              socket.emit('insertar_usuario_resultado','error');
+            }else{
+              socket.emit('insertar_usuario_resultado','exito');
+            }
+          });
+        }
+      }
+    });
+  }else{
+    socket.emit('insertar_usuario_resultado','error');
+  }
+});
+socket.on('borrar_usuario',function(datos){
+var query = connection.query('DELETE FROM USUARIO WHERE CARNET = ?',[datos.c],function(error,resultado){
+      if(error){
+        throw error;
+        socket.emit('borrar_usuario_resultado','error');
+      }else{
+        socket.emit('borrar_usuario_resultado','exito');
+      }
+    });
+});
 });
