@@ -7,15 +7,16 @@
   <script src="javascripts/jquery-2.1.4.min.js"></script>
   <script src="javascripts/bootstrap.min.js"></script>
 </head>
-<body style="height:80%">
+<body style="height:93%">
   <div class="jumbotron" style="background-image:url(images/landscape.jpg);background-size:cover;height:100%">
     <div class="container" style="text-align:center">
-      <h1>¡Bienvenido!</h1>
-      <p>Proyecto del Grupo 7</p>
+      <h1><strong>¡Bienvenido!</strong></h1>
+      <h3><strong>Proyecto del Grupo 7</strong></h3>
     </div>
   </div>
-  <nav class="navbar navbar-inverse" role="navigation">
+  <nav class="navbar navbar-inverse navbar-fixed-bottom">
     <div class="navbar-header">
+      <span class="navbar-brand">Proyecto Analisis 1</span>
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#index-navbar-collapse">
         <span class="sr-only">Toggle nav</span>
         <span class="icon-bar"></span>
@@ -24,11 +25,35 @@
       </button>
     </div>
     <div class="collapse navbar-collapse" id="index-navbar-collapse">
-      <ul class="nav navbar-nav">
-        <li><a href="/pagina">Eventos</a></li>
-        <li><a href="/estudiantes">Estudiantes</a></li>
+      <ul id="links" class="nav navbar-nav">
       </ul>
+<form class="navbar-form navbar-right" role="form" method="post" action="/">
+      <div id="formas" class="form-group">
+        <input type="text" class="form-control" placeholder="carnet" name="carnet">
+        <input type="password" class="form-control" placeholder="password" name ="pass">
+        <input type="hidden" name = "modo" value = "login">
+        <button type="submit" class="btn btn-inverse">Login</button>
+      </div>
+    </form>
     </div>
+
   </nav>
+  <script>
+  $(function(){
+    console.log('nombre: {{ucar}}')
+    var tipo = '{{ucar}}';
+    switch(tipo){
+      case '':
+      break;
+      case 'admin':
+      document.getElementById('links').innerHTML = "<li><a href=\"/register\">Usuarios</a></li>";
+      document.getElementById('formas').innerHTML = "<input type=\"hidden\"  name=\"modo\" value=\"salir\"><input type=\"hidden\"  name=\"carnet\" value=\"salir\"><input type=\"hidden\"  name=\"pass\" value=\"salir\"><button type=\"submit\" class=\"btn btn-inverse\">Salir</button>";
+      break;
+      default:
+      document.getElementById('links').innerHTML = "<li><a href=\"/pagina\">Eventos</a></li><li><a href=\"/estudiantes\">Estudiantes</a></li><li><a href=\"/reporte\">Reportes</a></li>";
+      document.getElementById('formas').innerHTML = "<input type=\"hidden\"  name=\"modo\" value=\"salir\"><input type=\"hidden\"  name=\"carnet\" value=\"salir\"><input type=\"hidden\"  name=\"pass\" value=\"salir\"><button type=\"submit\" class=\"btn btn-inverse\">Salir</button>";
+    }
+  });
+  </script>
 </body>
 </html>

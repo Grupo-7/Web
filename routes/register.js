@@ -3,7 +3,11 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('register');
+	if(req.session.carnet == 'admin'){
+		res.render('register');
+	}else{
+		res.redirect('/');
+	}
 });
 
 module.exports = router;
