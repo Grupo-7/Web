@@ -415,5 +415,18 @@ client1.on('connect', function(data){
     });
   });
 
+  it('borrar_evento_resultado_error',function(done){
+    var cliente = io.connect(socketURL,options);
+
+    cliente.on('connect',function(){
+      cliente.emit('borrar_evento','');
+    });
+
+    cliente.on('borrar_evento_resultado',function(data){
+      data.should.equal('error');
+      cliente.disconnect();
+      done();
+    })
+  });
 });
 
