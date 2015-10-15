@@ -14,9 +14,27 @@ socket.on("Llenar", function (data) {
       newOp.text = d1[0];
       newOp.value = d1[1];
       list.options.add(newOp);
-      contador++;}
+      contador++;
     }
-  });
+  }
+  socket.emit('solicitar_llenar_todos_eventos');
+});
+socket.on('llenar_todos_eventos',function(data){
+  var list = document.getElementById('evento_a_borrar');
+  list.options.length=0;
+  data2=data.split(";");
+  if(data2.length>0){
+    var contador=0;
+    while(contador<data2.length){
+      d1=data2[contador].split(",");
+      var newOp = document.createElement("option");
+      newOp.text = d1[0];
+      newOp.value = d1[1];
+      list.options.add(newOp);
+      contador++;
+    }
+  }
+});
 document.getElementById("Send").addEventListener("click", function () {
   var fecha_inicio=document.getElementById("fecha1").value.replace("T"," ")+":00";
   var fecha_fin=document.getElementById("fecha2").value.replace("T"," ")+":00";
@@ -54,6 +72,9 @@ document.getElementById("terminar_evento").addEventListener("click", function ()
     contrasena:document.getElementById("Contrasena").value
   });
 });
+document.getElementById('boton_borrar').addEventListener('click',function(){
+  socket.emit('eliminar_evento',document.getElementById('evento_a_borrar').value);
+});
 socket.on("resultado2", function (respuesta) {
   document.getElementById("Messages2").innerHTML ="";
   if(respuesta=="correcto"){
@@ -64,6 +85,16 @@ socket.on("resultado2", function (respuesta) {
   }
   else {
     document.getElementById("Messages2").innerHTML = "<div class=\"alert alert-danger alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>Hubo un error con la base de datos, no se pudo terminar el evento</div>";
+  }
+  socket.emit('solicitar_llenar');
+});
+socket.on("res_eliminar_evento", function (respuesta) {
+  document.getElementById("Messages2").innerHTML ="";
+  if(respuesta=="correcto"){
+    document.getElementById("Messages3").innerHTML = "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>Se ha eliminado el evento exitosamente</div>";
+  }
+  else {
+    document.getElementById("Messages3").innerHTML = "<div class=\"alert alert-danger alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>Hubo un error con la base de datos, no se pudo eliminar el evento</div>";
   }
   socket.emit('solicitar_llenar');
 });

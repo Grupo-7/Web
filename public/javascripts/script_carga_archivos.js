@@ -1,7 +1,7 @@
 var socket = io.connect();
-var num_maestro = '201213234';
+var num_maestro = ucar;
 socket.on("connect",function(){
-	socket.emit('solicitar_llenar_pag_estudiantes');
+	socket.emit('solicitar_llenar_pag_estudiantes',num_maestro);
 });
 socket.on('llenar_pag_estudiantes',function(datos){
 	var list=document.getElementById("lista_secciones");
@@ -28,7 +28,7 @@ socket.on('llenar_pag_estudiantes',function(datos){
 			list2.options.add(newOp2);
 			list3.options.add(newOp3);
 		}
-		socket.emit('solicitar_llenar_lista_estudiantes',list3.value);
+		socket.emit('solicitar_llenar_lista_estudiantes',{carnet:num_maestro,datos:list3.value});
 	}
 });
 socket.on('llenar_lista_estudiantes',function(datos){
@@ -60,6 +60,7 @@ $(document).ready(function () {
 		CargarArchivo('0');
 	});
 	document.getElementById('btn_nueva_seccion').onclick = function(){
+		console.log(num_maestro);
 		socket.emit('crear_seccion',{nombre:document.getElementById('nombre_nueva_seccion').value,maestro:num_maestro});
 	};
 	document.getElementById('seccion_seleccionada').onchange = function(){		
